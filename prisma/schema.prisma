@@ -1,0 +1,163 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model - Core user data
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  username      String     @unique
+  displayName   String
+  bio           String?
+  avatar        String?    // URL to avatar image
+  coverImage    String?    // URL to cover image
+  passwordHash  String
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  // Relations
+  posts         Post[]
+  likes         Like[]
+  replies       Reply[]
+  interests     Interest[]
+  interestedBy  Interest[] @relation("InterestedBy")
+  sentMessages  Message[]  @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  notifications Notification[]
+  bookmarks     Bookmark[]
+
+  @@index([email])
+  @@index([username])
+}
+
+// Post model - Text and voice posts
+model Post {
+  id            String     @id @default(cuid())
+  content       String
+  authorId      String
+  author        User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  // Media attachments
+  images        String[]   // Array of image URLs
+  videos        String[]   // Array of video URLs
+  voiceUrl      String?    // URL to voice recording
+  voiceDuration Int?       // Duration in seconds
+  
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  // Relations
+  likes         Like[]
+  replies       Reply[]
+  bookmarks     Bookmark[]
+
+  @@index([authorId])
+  @@index([createdAt])
+}
+
+// Like model - Track post likes
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+  @@index([userId])
+  @@index([postId])
+}
+
+// Reply model - Threaded replies to posts
+model Reply {
+  id        String   @id @default(cuid())
+  content   String
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  // Media attachments
+  images    String[]
+  videos    String[]
+  voiceUrl  String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([postId])
+}
+
+// Interest model - Users interested in other users (instead of follow)
+model Interest {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interestedInId String
+  interestedIn User    @relation("InterestedBy", fields: [interestedInId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, interestedInId])
+  @@index([userId])
+  @@index([interestedInId])
+}
+
+// Message model - Direct messaging
+model Message {
+  id          String   @id @default(cuid())
+  content     String
+  senderId    String
+  sender      User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  recipientId String
+  recipient   User     @relation("ReceivedMessages", fields: [recipientId], references: [id], onDelete: Cascade)
+  
+  // Media attachments
+  imageUrl    String?
+  videoUrl    String?
+  voiceUrl    String?
+  
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@index([senderId])
+  @@index([recipientId])
+  @@index([createdAt])
+}
+
+// Notification model - Real-time notifications
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // "like", "reply", "interest", "message"
+  message   String
+  relatedId String?  // ID of related post/user/message
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// Bookmark model - Save posts
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+  @@index([userId])
+}

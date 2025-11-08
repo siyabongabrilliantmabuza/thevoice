@@ -1,0 +1,27 @@
+
+> peculiar@0.1.0 dev
+> next dev --turbopack
+
+ ⚠ Port 3000 is in use by an unknown process, using available port 3001 instead.
+   ▲ Next.js 15.5.3 (Turbopack)
+   - Local:        http://localhost:3001
+   - Network:      http://169.254.0.21:3001
+   - Environments: .env.local, .env
+
+ ✓ Starting...
+ ✓ Ready in 1862ms
+ ○ Compiling / ...
+ ✓ Compiled / in 7.2s
+ GET / 200 in 8078ms
+ ✓ Compiled /favicon.ico in 488ms
+ GET /favicon.ico?favicon.bf3c9292.ico 200 in 844ms
+ ○ Compiling /auth/login ...
+ ✓ Compiled /auth/login in 1093ms
+ GET /auth/login 200 in 1395ms
+ ○ Compiling /messages ...
+ ✓ Compiled /messages in 800ms
+ GET /messages 200 in 1053ms
+ ○ Compiling /profile/[username] ...
+ ✓ Compiled /profile/[username] in 757ms
+ GET /profile/testuser 200 in 1602ms
+ GET /messages 200 in 181ms
