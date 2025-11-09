@@ -5,23 +5,13 @@
  ⚠ Port 3000 is in use by an unknown process, using available port 3001 instead.
    ▲ Next.js 15.5.3 (Turbopack)
    - Local:        http://localhost:3001
-   - Network:      http://169.254.0.21:3001
-   - Environments: .env.local, .env
-
- ✓ Starting...
- ✓ Ready in 1862ms
+   - Network:      http://169.254.0. ○ Compiling / ...
+ ✓ Compiled / in 7s
+ GET / 200 in 7800ms
+�� Ready in 1784ms
  ○ Compiling / ...
- ✓ Compiled / in 7.2s
- GET / 200 in 8078ms
- ✓ Compiled /favicon.ico in 488ms
- GET /favicon.ico?favicon.bf3c9292.ico 200 in 844ms
- ○ Compiling /auth/login ...
- ✓ Compiled /auth/login in 1093ms
- GET /auth/login 200 in 1395ms
- ○ Compiling /messages ...
- ✓ Compiled /messages in 800ms
- GET /messages 200 in 1053ms
- ○ Compiling /profile/[username] ...
- ✓ Compiled /profile/[username] in 757ms
- GET /profile/testuser 200 in 1602ms
- GET /messages 200 in 181ms
+ ✓ Compiled / in 8.4s
+ GET / 200 in 9221ms
+ ⚠ Cross origin request detected from peculiar-4.lindy.site to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ ⚠ Found a change in next.config.ts. Restarting the server to apply the changes...

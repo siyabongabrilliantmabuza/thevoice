@@ -342,7 +342,7 @@ export default function HomePage() {
           transition={{ delay: 0.1 }}
           className="bg-gray-900 rounded-2xl p-4"
         >
-          <h3 className="text-xl font-bold mb-4">What's happening</h3>
+          <h3 className="text-xl font-bold mb-4">WhatWhat's happeningapos;s happening</h3>
           {[
             { tag: '#VoiceMatters', posts: '125K posts' },
             { tag: '#PeculiarCommunity', posts: '89K posts' },

@@ -37,7 +37,7 @@ export default function VoiceRecorder({ onClose, onRecordingComplete }: VoiceRec
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       
       // Setup audio context for visualization
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
+      audioContextRef.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
       analyserRef.current = audioContextRef.current.createAnalyser()
       const source = audioContextRef.current.createMediaStreamSource(stream)
       source.connect(analyserRef.current)

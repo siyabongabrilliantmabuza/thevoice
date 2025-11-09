@@ -4,9 +4,10 @@ import { verifyToken, getTokenFromRequest } from '@/lib/auth'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const token = getTokenFromRequest(request)
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -17,23 +18,16 @@ export async function POST(
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    const { content, images, videos, voiceUrl } = await request.json()
-
-    if (!content && !images?.length && !videos?.length && !voiceUrl) {
-      return NextResponse.json(
-        { error: 'Reply must have content or media' },
-        { status: 400 }
-      )
+    const { content } = await request.json()
+    if (!content) {
+      return NextResponse.json({ error: 'Content is required' }, { status: 400 })
     }
 
     const reply = await prisma.reply.create({
       data: {
-        content: content || '',
+        content,
         authorId: payload.userId,
-        postId: params.id,
-        images: images || [],
-        videos: videos || [],
-        voiceUrl,
+        postId: id,
       },
       include: {
         author: {
@@ -48,22 +42,22 @@ export async function POST(
     })
 
     // Create notification
-    const post = await prisma.post.findUnique({
-      where: { id: params.id },
+    const parentPost = await prisma.post.findUnique({
+      where: { id },
     })
 
-    if (post && post.authorId !== payload.userId) {
+    if (parentPost && parentPost.authorId !== payload.userId) {
       await prisma.notification.create({
         data: {
-          userId: post.authorId,
+          userId: parentPost.authorId,
           type: 'reply',
           message: `Someone replied to your post`,
-          relatedId: params.id,
+          relatedId: id,
         },
       })
     }
 
-    return NextResponse.json(reply, { status: 201 })
+    return NextResponse.json(reply)
   } catch (error) {
     console.error('Reply error:', error)
     return NextResponse.json(
